@@ -1,0 +1,60 @@
+import db from '../config/bubba_db.js';
+
+class DetallePedidoService {
+  async getAll() {
+    try {
+      const [rows] = await db.promise().query('SELECT * FROM Detalle_Pedido');
+      return rows;
+    } catch (error) {
+      console.error('Error al obtener los detalles de pedidos:', error);
+      throw error;
+    }
+  }
+
+  async getByPedido(id_pedido) {
+    try {
+      const [rows] = await db
+        .promise()
+        .query('SELECT * FROM Detalle_Pedido WHERE id_pedido = ?', [id_pedido]);
+      return rows;
+    } catch (error) {
+      console.error('Error al obtener los detalles del pedido:', error);
+      throw error;
+    }
+  }
+
+  async create({ id_pedido, id_producto, cantidad }) {
+    try {
+      const [result] = await db
+        .promise()
+        .query(
+          'INSERT INTO Detalle_Pedido (id_pedido, id_producto, cantidad) VALUES (?, ?, ?)',
+          [id_pedido, id_producto, cantidad]
+        );
+
+      return {
+        id_detalle_pedido: result.insertId,
+        id_pedido,
+        id_producto,
+        cantidad,
+      };
+    } catch (error) {
+      console.error('Error al crear un detalle de pedido:', error);
+      throw error;
+    }
+  }
+
+  async delete(id_detalle_pedido) {
+    try {
+      const [result] = await db
+        .promise()
+        .query('DELETE FROM Detalle_Pedido WHERE id_detalle_pedido = ?', [id_detalle_pedido]);
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error('Error al eliminar un detalle de pedido:', error);
+      throw error;
+    }
+  }
+}
+
+export default new DetallePedidoService();
