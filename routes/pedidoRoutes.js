@@ -3,7 +3,6 @@ import pedidoService from '../services/pedidoService.js';
 
 const router = express.Router();
 
-// Obtener todos los pedidos
 router.get('/', async (req, res, next) => {
   try {
     const pedidos = await pedidoService.getAll();
@@ -13,12 +12,10 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// Obtener un pedido por ID
 router.get('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
     const pedido = await pedidoService.getById(id);
-
     if (pedido) {
       res.status(200).json(pedido);
     } else {
@@ -29,23 +26,36 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-// Crear un nuevo pedido
-router.post('/', async (req, res, next) => {
+router.get('/usuario/:id_usuario', async (req, res, next) => {
   try {
-    const { id_usuario, total, estado } = req.body;
+    const { id_usuario } = req.params;
 
-    // Validación básica
-    if (!id_usuario || !total) {
+    const pedidos = await pedidoService.getByUser(id_usuario);
+
+    if (pedidos.length > 0) {
+      res.status(200).json(pedidos);
+    } else {
+      res.status(404).json({ message: 'Este usuario no tiene pedidos registrados' });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/completo', async (req, res, next) => {
+  try {
+    const { id_usuario, productos } = req.body;
+
+    if (!id_usuario || !Array.isArray(productos) || productos.length === 0) {
       return res.status(400).json({
-        message: 'Faltan datos requeridos: id_usuario y total son obligatorios',
+        message:
+          'Se requiere id_usuario y una lista de productos con id_producto y cantidad',
       });
     }
 
-    // Crear pedido usando el service
-    const nuevoPedido = await pedidoService.create({
+    const nuevoPedido = await pedidoService.createWithDetails({
       id_usuario,
-      total,
-      estado: estado || 'pendiente', // por defecto
+      productos,
     });
 
     res.status(201).json({
@@ -57,7 +67,6 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-// Eliminar o cancelar un pedido por ID
 router.delete('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -65,7 +74,7 @@ router.delete('/:id', async (req, res, next) => {
 
     if (deletePedido) {
       res.status(200).json({
-        message: 'Pedido cancelado correctamente',
+        message: 'Pedido Cancelado',
         data: deletePedido,
       });
     } else {

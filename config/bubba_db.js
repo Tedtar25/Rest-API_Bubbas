@@ -1,20 +1,25 @@
-import mysql from 'mysql2'
+import mysql from 'mysql2';
 
-const config = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    database: 'Bubbas_API',
-    password:'root',
-    port: 3306,
+const db = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  password: 'root',
+  database: 'Bubbas_API',
+  port: 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-//conectar a la DB
-config.connect((err) =>{
-    if(err){
-        console.error(`No fue posible la conexion`, err);
-    }else{
-        console.log(`Conexion exitosa`)
-    }
+db.getConnection((err, connection) => {
+  if (err) {
+    console.error("Error al conectar a MySQL:", err);
+    return;
+  }
+  console.log("Conexión a MySQL exitosa!");
+  connection.release();
 });
 
-export default config;
+export default db;
+
+/**cloudflared tunnel --url http://localhost:666 */

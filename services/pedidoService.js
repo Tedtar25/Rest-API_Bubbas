@@ -23,6 +23,19 @@ class PedidoService {
     }
   }
 
+  async getByUser(id_usuario) {
+    try {
+      const [rows] = await db
+        .promise()
+        .query('SELECT * FROM Pedido WHERE id_usuario = ?', [id_usuario]);
+
+      return rows;
+    } catch (error) {
+      console.error('Error al obtener pedidos por usuario:', error);
+      throw error;
+    }
+  }
+
   async create({ id_usuario, total, estado = 'pendiente' }) {
     try {
       const [result] = await db

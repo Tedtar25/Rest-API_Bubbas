@@ -34,7 +34,6 @@ router.post('/', async (req, res, next) => {
   try {
     const { id_pedido, id_producto, cantidad } = req.body;
 
-    // Validación básica
     if (!id_pedido || !id_producto || !cantidad) {
       return res.status(400).json({
         message:
@@ -76,3 +75,5 @@ router.delete('/:id_detalle', async (req, res, next) => {
 });
 
 export default router;
+
+/**cloudflared tunnel --url http://localhost:666 */
