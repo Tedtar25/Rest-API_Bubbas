@@ -17,8 +17,17 @@ app.use(errorHandler);
 
 // Ruta base para probar
 app.get('/', (req, res) => {
-  res.send('Hola mundo');
+  res.send(`
+    Las rutas son:<br>
+    GET  /v1/usuarios                     - Listar usuarios<br>
+    GET  /v1/productos                    - Listar productos<br>
+    GET  /v1/pedidos                      - Listar pedidos<br>
+    GET  /v1/detalles                     - Listar detalles<br>
+    GET  /v1/pedidos/pedido/:id_pedido    - Obtener detalles por ID de pedido<br>
+    POST /v1/pedidos/completo             - Crear un pedido completo
+  `);
 });
+
 
 // Rutas de la API
 routerApi(app);
