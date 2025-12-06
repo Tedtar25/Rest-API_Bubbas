@@ -1,4 +1,5 @@
 import express from 'express';
+import 'dotenv/config';
 import db from '../config/bubba_db.js';
 
 import routerApi from '../routes/rutasGeneral.js';
